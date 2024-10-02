@@ -1,18 +1,13 @@
 ﻿namespace Entity.Models
 {
-    public class Suppliers : BaseModel
+    /// <summary>
+    /// Representa un proveedor en el sistema, contiene información detallada de la empresa y del contacto.
+    /// </summary>
+    public class Suppliers : BaseModelContact
     {
-        public int  SuppliersID { get; set; }
-        public string  CompanyName { get; set; }
-        public string  ContactName { get; set; }
-        public string ContactTitle { get; set; }
-        public string  Address { get; set; }
-        public string  City { get; set; }
-        public string  Region { get; set; }
-        public string  PostalCode { get; set; }
-        public string  Country { get; set; }
-        public string  Phone { get; set; }
-        public string Fax { get; set; }
-        public string HomePage { get; set; }
+        /// <summary>
+        /// Página de inicio del proveedor, puede ser nula si no aplica.
+        /// </summary>
+        public string? HomePage { get; set; }
     }
 }

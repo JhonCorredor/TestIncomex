@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,18 @@ namespace Entity.Contexts
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             DataInicial.Data(modelBuilder);
+
+            // Aplicar configuraciones para todas las entidades con una sola clase de configuración.
+            var configuration = new ApplicationEntityConfigurations();
+            modelBuilder.ApplyConfiguration<Suppliers>(configuration);
+            modelBuilder.ApplyConfiguration<Customer>(configuration);
+            modelBuilder.ApplyConfiguration<Product>(configuration);
+            modelBuilder.ApplyConfiguration<Category>(configuration);
+            modelBuilder.ApplyConfiguration<Employee>(configuration);
+            modelBuilder.ApplyConfiguration<Order>(configuration);
+            modelBuilder.ApplyConfiguration<OrderDetail>(configuration);
+            modelBuilder.ApplyConfiguration<Shipper>(configuration);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -41,7 +54,6 @@ namespace Entity.Contexts
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            // otras configuraciones...
         }
 
         /// <summary>

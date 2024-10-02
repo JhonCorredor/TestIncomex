@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entity.Contexts;
 using Entity.Dtos;
+using Entity.Dtos.General;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,11 +21,14 @@ namespace Data.Implementations
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Obtiene una colección de todos los objetos en la base de datos en forma de DTOs.
+        /// </summary>
         public override async Task<IEnumerable<D>> GetAllSelect()
         {
             try
             {
-                var lstModel = await _context.Set<T>().ToListAsync();
+                var lstModel = await _context.Set<T>().Where(e => e.DeletedAt == null).ToListAsync();
 
                 List<D> lstDto = new List<D>();
                 foreach (var item in lstModel)
@@ -41,30 +45,29 @@ namespace Data.Implementations
             }
         }
 
+        /// <summary>
+        /// Obtiene una colección de objetos en la base de datos aplicando filtros específicos.
+        /// </summary>
         public override async Task<IEnumerable<D>> GetDataTable(QueryFilterDto filters)
         {
-            // Preparar la consulta inicial con Entity Framework
-            IQueryable<T> query = _context.Set<T>();
+            IQueryable<T> query = _context.Set<T>().Where(e => e.DeletedAt == null);
 
-            // Aplicar filtro por clave foránea si es necesario
             if (filters.ForeignKey != null && !string.IsNullOrEmpty(filters.NameForeignKey))
             {
                 query = query.Where(i => EF.Property<int>(i, filters.NameForeignKey) == filters.ForeignKey);
             }
 
-            // Aplicar filtros dinámicos si es necesario    
             if (!string.IsNullOrEmpty(filters.Filter))
             {
                 query = (IQueryable<T>)PagedListDto<T>.ApplyDynamicFilters(query, filters);
             }
 
-            // Ordenar los resultados si es necesario
             if (!string.IsNullOrEmpty(filters.ColumnOrder) && !string.IsNullOrEmpty(filters.DirectionOrder))
             {
                 query = PagedListDto<T>.ApplyOrdering(query, filters);
             }
 
-            IEnumerable<T> lstModel = await query.ToListAsync();
+            var lstModel = await query.ToListAsync();
 
             List<D> lstDto = new List<D>();
             foreach (var item in lstModel)
@@ -75,21 +78,17 @@ namespace Data.Implementations
             return lstDto;
         }
 
+        /// <summary>
+        /// Obtiene una entidad por su identificador único.
+        /// </summary>
         public override async Task<T> GetById(int id)
         {
-            // Lógica para obtener un elemento por ID
-            // Puedes implementar esto en clases concretas
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id && e.DeletedAt == null);
         }
 
-        public override async Task<T> GetByCode(string code)
-        {
-            // Lógica para obtener un elemento por code
-            // Puedes implementar esto en clases concretas
-            return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<string>(e, "Codigo") == code);
-
-        }
-
+        /// <summary>
+        /// Guarda una nueva entidad en la base de datos.
+        /// </summary>
         public override async Task<T> Save(T entity)
         {
             _context.Set<T>().Add(entity);
@@ -97,16 +96,31 @@ namespace Data.Implementations
             return entity;
         }
 
+        /// <summary>
+        /// Actualiza una entidad existente en la base de datos.
+        /// </summary>
         public override async Task Update(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Realiza un eliminado lógico de una entidad en la base de datos.
+        /// </summary>
+        /// <param name="id">Identificador único de la entidad a eliminar lógicamente.</param>
+        /// <returns>Un entero que indica el resultado del proceso de eliminación lógica.</returns>
         public override async Task<int> Delete(int id)
         {
-            int entity = await _context.Set<T>().Where(d => d.Id == id).ExecuteDeleteAsync();
-            return entity;
+            var entity = await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"No se encontró la entidad con el ID {id}.");
+            }
+
+            entity.DeletedAt = DateTime.UtcNow;
+            _context.Entry(entity).State = EntityState.Modified;
+            return await _context.SaveChangesAsync();
         }
     }
 }
