@@ -1,0 +1,20 @@
+
+{
+    "region" : "us-east-2",
+    "configuration" : "Release",
+    "framework"     : "net8.0",
+    "self-contained" : true,
+    "application"    : "Intcomex",
+    "environment"    : "Intcomex-dev",
+    "enable-xray"    : false,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-0fcfe365fac076bb7\";\"aws:ec2:vpc,Subnets\"=\"subnet-073e6d7cd1c208766,subnet-09393c25d38097de3,subnet-06fd73b961fcbf826\"",
+    "solution-stack"       : "64bit Amazon Linux 2 v2.8.3 running .NET Core",
+    "environment-type"     : "SingleInstance",
+    "cname"                : "intcomex-dev",
+    "instance-type"        : "t3a.medium",
+    "key-pair"             : "Intcomex",
+    "instance-profile"     : "aws-elasticbeanstalk-ec2-role",
+    "service-role"         : "aws-elasticbeanstalk-service-role",
+    "proxy-server"         : "nginx"
+}

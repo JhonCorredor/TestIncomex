@@ -7,6 +7,19 @@ using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Definir la política de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("_myAllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("https://localhost:44355/") // Dominios permitidos
+              .AllowAnyHeader() // Permitir cualquier encabezado
+              .AllowAnyMethod() // Permitir cualquier método (GET, POST, etc.)
+              .AllowCredentials(); // Permitir credenciales
+    });
+});
+
 // Configuración de URL específica
 builder.WebHost.UseUrls("http://*:5000");
 
@@ -86,7 +99,7 @@ app.UseAuthorization();
 // Mapeo de controladores a rutas
 app.MapControllers();
 
-// Configuración específica de CORS (probablemente innecesaria aquí debido a `app.UseCors` anterior)
+// Configuración específica de CORS 
 app.UseCors("_myAllowSpecificOrigins");
 
 // Ejecutar la aplicación
