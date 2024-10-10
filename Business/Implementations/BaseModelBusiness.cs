@@ -31,9 +31,9 @@ namespace Business.Implementations
         /// Obtiene todos los registros seleccionados de la base de datos en formato DTO.
         /// </summary>
         /// <returns>Lista de DTOs que representan las entidades.</returns>
-        public override async Task<List<D>> GetAllSelect()
+        public override async Task<List<D>> GetAll(PaginationDto pagination)
         {
-            IEnumerable<D> lstDto = await _data.GetAllSelect();
+            IEnumerable<D> lstDto = await _data.GetAll(pagination);
             return lstDto.ToList();
         }
 
@@ -44,19 +44,8 @@ namespace Business.Implementations
         /// <returns>DTO que representa la entidad obtenida.</returns>
         public override async Task<D> GetById(int id)
         {
-            T entity = await _data.GetById(id);
-            D dto = _mapper.Map<D>(entity);
+            D dto = await _data.GetById(id);
             return dto;
-        }
-
-        /// <summary>
-        /// Obtiene una lista de registros que cumplen con los filtros proporcionados.
-        /// </summary>
-        /// <param name="filters">Filtros a aplicar en la consulta de datos.</param>
-        /// <returns>Lista de DTOs que cumplen con los filtros.</returns>
-        public override async Task<List<D>> GetDataTable(QueryFilterDto filters)
-        {
-            return (List<D>)await _data.GetDataTable(filters);
         }
 
         /// <summary>
@@ -66,22 +55,54 @@ namespace Business.Implementations
         /// <returns>DTO del registro guardado.</returns>
         public override async Task<D> Save(D dto)
         {
-            dto.CreateAt = DateTime.Now; // Establecer la fecha de creación
-            dto.Activo = true; // Establecer el campo Activo como verdadero
-            BaseModel entity = _mapper.Map<T>(dto); // Mapear DTO a la entidad
-            entity = await _data.Save((T)entity); // Guardar la entidad
-            return _mapper.Map<D>(entity); // Mapear la entidad guardada de nuevo al DTO
-        }
+            try
+            {
+                dto.CreateAt = DateTime.Now; // Establecer la fecha de creación
+                dto.Activo = true; // Establecer el campo Activo como verdadero
 
+                // Intentar mapear DTO a la entidad
+
+                BaseModel entity = _mapper.Map<T>(dto);
+                if (entity == null)
+                {
+                    // Manejar la excepción de mapeo específica de AutoMapper
+                    throw new AutoMapperMappingException("El mapeo del DTO a la entidad falló.");
+                }
+
+                // Guardar la entidad
+                entity = await _data.Save((T)entity);
+                // Mapear la entidad guardada de nuevo al DTO
+                return _mapper.Map<D>(entity);
+            }
+            catch (AutoMapperMappingException)
+            {
+                throw; // Re-lanzar la excepción de mapeo
+            }
+            catch (Exception ex) when (!(ex is AutoMapperMappingException))
+            {
+                // Lanzar la excepción original para mantener el mensaje
+                throw new Exception(ex.Message, ex);
+            }
+        }
         /// <summary>
-        /// Actualiza un registro existente utilizando el DTO proporcionado.
+        /// Actualiza un nuevo registro en la base de datos utilizando el DTO proporcionado.
         /// </summary>
-        /// <param name="dto">DTO que contiene los datos a actualizar.</param>
+        /// <param name="dto">DTO que representa los datos a modificar.</param>
+        /// <returns>DTO del registro modificado.</returns>
+
         public override async Task Update(D dto)
         {
             dto.CreateAt = DateTime.Now; // Actualizar la fecha de creación
             BaseModel entity = _mapper.Map<T>(dto); // Mapear DTO a la entidad
+
+            // Verifica que el mapeo no devuelva null
+            if (entity == null)
+            {
+                throw new AutoMapperMappingException("El mapeo del DTO a la entidad falló.");
+            }
+
             await _data.Update((T)entity); // Actualizar la entidad
         }
+
     }
 }

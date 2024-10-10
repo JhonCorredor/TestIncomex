@@ -20,7 +20,7 @@ namespace Web.Controllers.Implementations
         /// Obtiene todas las entidades del tipo especificado y las retorna como una lista de DTOs.
         /// </summary>
         /// <returns>Una lista de DTOs correspondientes a todas las entidades almacenadas.</returns>
-        public abstract Task<ActionResult<IEnumerable<D>>> GetAllSelect();
+        public abstract Task<ActionResult<IEnumerable<D>>> GetAll([FromQuery] PaginationDto pagination);
 
         /// <summary>
         /// Obtiene una entidad específica por su identificador.
@@ -28,14 +28,6 @@ namespace Web.Controllers.Implementations
         /// <param name="id">Identificador único de la entidad a obtener.</param>
         /// <returns>El DTO correspondiente a la entidad encontrada, o un error si no se encuentra.</returns>
         public abstract Task<ActionResult<D>> GetById(int id);
-
-        /// <summary>
-        /// Obtiene una lista de entidades según los filtros proporcionados.
-        /// </summary>
-        /// <param name="filters">Filtros a aplicar, como paginación, ordenación, y otros criterios específicos.</param>
-        /// <returns>Una lista de DTOs que cumplen con los filtros especificados.</returns>
-        public abstract Task<ActionResult<IEnumerable<D>>> GetDataTable([FromQuery] QueryFilterDto filters);
-
         /// <summary>
         /// Guarda una nueva entidad en la base de datos.
         /// </summary>

@@ -19,7 +19,7 @@ namespace Business.Implementations
         /// Obtiene una lista de todos los DTOs correspondientes a las entidades almacenadas.
         /// </summary>
         /// <returns>Lista de DTOs correspondientes a todas las entidades.</returns>
-        public abstract Task<List<D>> GetAllSelect();
+        public abstract Task<List<D>> GetAll(PaginationDto pagination);
 
         /// <summary>
         /// Obtiene un DTO correspondiente a una entidad, identificada por su identificador único.
@@ -27,13 +27,6 @@ namespace Business.Implementations
         /// <param name="id">Identificador único de la entidad.</param>
         /// <returns>El DTO correspondiente a la entidad.</returns>
         public abstract Task<D> GetById(int id);
-
-        /// <summary>
-        /// Obtiene una lista de DTOs que cumplen con los filtros especificados.
-        /// </summary>
-        /// <param name="filters">Objeto que contiene los filtros para aplicar en la consulta.</param>
-        /// <returns>Lista de DTOs que cumplen con los filtros especificados.</returns>
-        public abstract Task<List<D>> GetDataTable(QueryFilterDto filters);
 
         /// <summary>
         /// Guarda una nueva entidad a partir del DTO proporcionado.

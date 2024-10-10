@@ -9,17 +9,10 @@ namespace Business.Interfaces
     {
 
         /// <summary>
-        /// Obtiene un listado paginado de registros de la base de datos que cumplen con los filtros especificados.
-        /// </summary>
-        /// <param name="filters">Objeto que contiene los filtros a aplicar en la consulta.</param>
-        /// <returns>Una lista de DTOs que cumplen con los filtros aplicados.</returns>
-        Task<List<D>> GetDataTable(QueryFilterDto filters);
-
-        /// <summary>
         /// Obtiene todos los registros de la base de datos en formato DTO.
         /// </summary>
         /// <returns>Lista de todos los DTOs correspondientes a la entidad.</returns>
-        Task<List<D>> GetAllSelect();
+        Task<List<D>> GetAll(PaginationDto pagination);
 
         /// <summary>
         /// Obtiene un registro específico de la base de datos según su identificador único.

@@ -13,6 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Busine
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity", "Entity\Entity.csproj", "{B6E501BD-93E8-4310-8BEB-238BDFD4B624}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestIncomex.Tests", "TestIncomex.Tests\TestIncomex.Tests.csproj", "{ED1C539B-A69D-4647-9F35-18B6C894D647}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ebextensions", ".ebextensions", "{F3861141-840A-47A4-8907-93B25A632CE8}"
+	ProjectSection(SolutionItems) = preProject
+		launch-template.config = launch-template.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +46,10 @@ Global
 		{B6E501BD-93E8-4310-8BEB-238BDFD4B624}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6E501BD-93E8-4310-8BEB-238BDFD4B624}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6E501BD-93E8-4310-8BEB-238BDFD4B624}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED1C539B-A69D-4647-9F35-18B6C894D647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED1C539B-A69D-4647-9F35-18B6C894D647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED1C539B-A69D-4647-9F35-18B6C894D647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED1C539B-A69D-4647-9F35-18B6C894D647}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

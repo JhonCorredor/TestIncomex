@@ -1,9 +1,9 @@
 ﻿namespace Entity.Dtos
 {
     /// <summary>
-    /// Clase base abstracta para los DTOs de entidades que tienen información de contacto.
+    /// Clase base para los DTOs de entidades que tienen información de contacto.
     /// </summary>
-    public abstract class BaseModelContactDto : BaseDto
+    public class BaseModelContactDto : BaseDto
     {
         public string CompanyName { get; set; } = string.Empty;      
         public string ContactName { get; set; } = string.Empty;      

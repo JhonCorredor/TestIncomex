@@ -19,5 +19,6 @@
         /// Imagen de la categoría.
         /// </summary>
         public byte[] Picture { get; set; }
+
     }
 }

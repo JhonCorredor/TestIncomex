@@ -28,7 +28,7 @@ namespace Entity.Contexts
         {
             builder.HasKey(s => s.Id); // Clave primaria
             builder.HasIndex(s => s.CompanyName).HasDatabaseName("I1_CompanyName"); // Índice para CompanyName
-            builder.HasIndex(s => s.Region).HasDatabaseName("I2_Region"); // Índice para Region
+            builder.HasIndex(s => s.Region).HasDatabaseName("I2_Region_Suppliers"); // Índice para Region
         }
 
         /// <summary>
@@ -52,18 +52,18 @@ namespace Entity.Contexts
         {
             builder.HasKey(p => p.Id); // Clave primaria
             builder.HasIndex(p => p.ProductName).HasDatabaseName("I3_ProductName"); // Índice para ProductName
-            builder.HasIndex(p => p.SupplierID).HasDatabaseName("FK1_SupplierID"); // Índice para SupplierID
-            builder.HasIndex(p => p.CategoryID).HasDatabaseName("FK2_CategoryID"); // Índice para CategoryID
+            builder.HasIndex(p => p.SupplierId).HasDatabaseName("FK1_SupplierId"); // Índice para SupplierID
+            builder.HasIndex(p => p.CategoryId).HasDatabaseName("FK2_CategoryId"); // Índice para CategoryID
 
             // Relación con Category (cada Producto pertenece a una Categoría)
             builder.HasOne<Category>()
                 .WithMany()
-                .HasForeignKey(p => p.CategoryID);
+                .HasForeignKey(p => p.CategoryId);
 
             // Relación con Suppliers (cada Producto tiene un Proveedor)
             builder.HasOne<Suppliers>()
                 .WithMany()
-                .HasForeignKey(p => p.SupplierID);
+                .HasForeignKey(p => p.SupplierId);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Entity.Contexts
         {
             builder.HasKey(e => e.Id); // Clave primaria
             builder.HasIndex(e => new { e.LastName, e.FirstName }).HasDatabaseName("I1_LastName_FirstName"); // Índice compuesto para LastName y FirstName
-            builder.HasIndex(e => e.Region).HasDatabaseName("I2_Region"); // Índice para Region
+            builder.HasIndex(e => e.Region).HasDatabaseName("I2_Region_Employee"); // Índice para Region
 
             // Relación jerárquica de empleados (un empleado reporta a otro empleado)
             builder.HasOne<Employee>()
@@ -130,7 +130,9 @@ namespace Entity.Contexts
         /// <param name="builder">Constructor utilizado para configurar la entidad.</param>
         public void Configure(EntityTypeBuilder<OrderDetail> builder)
         {
-            builder.HasKey(od => new { od.OrderID, od.ProductID }); // Clave primaria compuesta (OrderID y ProductID)
+            builder.HasKey(od => od.Id); // Clave primaria
+            builder.HasIndex(od => od.OrderID).HasDatabaseName("FK1_OrderID"); // Índice para OrderID
+            builder.HasIndex(od => od.ProductID).HasDatabaseName("FK2_ProductID"); // Índice para ProductID
 
             // Relación con Order (cada detalle pertenece a un Pedido)
             builder.HasOne<Order>()

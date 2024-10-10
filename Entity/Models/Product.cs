@@ -1,4 +1,6 @@
-﻿namespace Entity.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Entity.Models
 {
     /// <summary>
     /// Representa un producto suministrado por un proveedor.
@@ -13,12 +15,12 @@
         /// <summary>
         /// Identificador del proveedor. Llave foránea relacionada con Supplier.
         /// </summary>
-        public int SupplierID { get; set; }
+        public int SupplierId { get; set; }
 
         /// <summary>
         /// Identificador de la categoría. Llave foránea relacionada con Category.
         /// </summary>
-        public int CategoryID { get; set; }
+        public int CategoryId { get; set; }
 
         /// <summary>
         /// Cantidad de producto por unidad.

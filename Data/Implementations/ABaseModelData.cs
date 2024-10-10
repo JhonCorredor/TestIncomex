@@ -21,7 +21,7 @@ namespace Data.Implementations
         /// Este método debe ser implementado por las clases derivadas.
         /// </summary>
         /// <returns>Una colección de DTOs que representan las entidades almacenadas en la base de datos.</returns>
-        public abstract Task<IEnumerable<D>> GetAllSelect();
+        public abstract Task<IEnumerable<D>> GetAll(PaginationDto pagination);
 
         /// <summary>
         /// Obtiene una entidad por su identificador único.
@@ -29,15 +29,7 @@ namespace Data.Implementations
         /// </summary>
         /// <param name="id">Identificador único de la entidad que se desea obtener.</param>
         /// <returns>La entidad correspondiente al identificador proporcionado.</returns>
-        public abstract Task<T> GetById(int id);
-
-        /// <summary>
-        /// Obtiene una colección de objetos en la base de datos aplicando filtros específicos.
-        /// Este método debe ser implementado por las clases derivadas.
-        /// </summary>
-        /// <param name="filters">Filtros a aplicar a la consulta de la base de datos.</param>
-        /// <returns>Una colección de DTOs que cumplen con los filtros especificados.</returns>
-        public abstract Task<IEnumerable<D>> GetDataTable(QueryFilterDto filters);
+        public abstract Task<D> GetById(int id);
 
         /// <summary>
         /// Guarda una nueva entidad en la base de datos.

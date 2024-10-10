@@ -14,11 +14,11 @@
         /// <summary>
         /// Indica si la entidad está activa o ha sido desactivada lógicamente.
         /// </summary>
-        public bool Activo { get; set; }
+        public bool ? Activo { get; set; }
 
         /// <summary>
         /// Fecha y hora en la que se creó la entidad.
         /// </summary>
-        public DateTime CreateAt { get; set; }
+        public DateTime ? CreateAt { get; set; }
     }
 }

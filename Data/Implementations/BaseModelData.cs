@@ -24,18 +24,22 @@ namespace Data.Implementations
         /// <summary>
         /// Obtiene una colección de todos los objetos en la base de datos en forma de DTOs.
         /// </summary>
-        public override async Task<IEnumerable<D>> GetAllSelect()
+        public override async Task<IEnumerable<D>> GetAll(PaginationDto pagination)
         {
             try
             {
-                var lstModel = await _context.Set<T>().Where(e => e.DeletedAt == null).ToListAsync();
+                IQueryable<T> query = _context.Set<T>().Where(e => e.DeletedAt == null);
 
-                List<D> lstDto = new List<D>();
-                foreach (var item in lstModel)
+                if (pagination.PageNumber != 0 && pagination.PageSize != 0)
                 {
-                    D dto = _mapper.Map<D>(item);
-                    lstDto.Add(dto);
+                    int skip = (pagination.PageNumber.GetValueOrDefault(1) - 1) * pagination.PageSize.GetValueOrDefault(10);
+                    query = query.Skip(skip).Take(pagination.PageSize.GetValueOrDefault(10));
                 }
+
+                var lstModel = await query.ToListAsync();
+
+                List<D> lstDto = lstModel.Select(item => _mapper.Map<D>(item)).ToList();
+
                 return lstDto;
             }
             catch (Exception ex)
@@ -46,44 +50,13 @@ namespace Data.Implementations
         }
 
         /// <summary>
-        /// Obtiene una colección de objetos en la base de datos aplicando filtros específicos.
-        /// </summary>
-        public override async Task<IEnumerable<D>> GetDataTable(QueryFilterDto filters)
-        {
-            IQueryable<T> query = _context.Set<T>().Where(e => e.DeletedAt == null);
-
-            if (filters.ForeignKey != null && !string.IsNullOrEmpty(filters.NameForeignKey))
-            {
-                query = query.Where(i => EF.Property<int>(i, filters.NameForeignKey) == filters.ForeignKey);
-            }
-
-            if (!string.IsNullOrEmpty(filters.Filter))
-            {
-                query = (IQueryable<T>)PagedListDto<T>.ApplyDynamicFilters(query, filters);
-            }
-
-            if (!string.IsNullOrEmpty(filters.ColumnOrder) && !string.IsNullOrEmpty(filters.DirectionOrder))
-            {
-                query = PagedListDto<T>.ApplyOrdering(query, filters);
-            }
-
-            var lstModel = await query.ToListAsync();
-
-            List<D> lstDto = new List<D>();
-            foreach (var item in lstModel)
-            {
-                D dto = _mapper.Map<D>(item);
-                lstDto.Add(dto);
-            }
-            return lstDto;
-        }
-
-        /// <summary>
         /// Obtiene una entidad por su identificador único.
         /// </summary>
-        public override async Task<T> GetById(int id)
+        public override async Task<D> GetById(int id)
         {
-            return await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id && e.DeletedAt == null);
+
+            T Dto = await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id && e.DeletedAt == null);
+            return _mapper.Map<D>(Dto);
         }
 
         /// <summary>
@@ -91,9 +64,16 @@ namespace Data.Implementations
         /// </summary>
         public override async Task<T> Save(T entity)
         {
-            _context.Set<T>().Add(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            try
+            {
+                _context.Set<T>().Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocurrió un error al guardar la entidad.", ex);
+            }
         }
 
         /// <summary>
@@ -101,8 +81,24 @@ namespace Data.Implementations
         /// </summary>
         public override async Task Update(T entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity), "La entidad no puede ser nula.");
+            }
+
+            try
+            {
+                _context.Entry(entity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new InvalidOperationException("La entidad que se está actualizando ha sido modificada por otro usuario.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException("Ocurrió un error al actualizar la entidad.", ex);
+            }
         }
 
         /// <summary>
@@ -118,9 +114,19 @@ namespace Data.Implementations
                 throw new KeyNotFoundException($"No se encontró la entidad con el ID {id}.");
             }
 
+            // Establecer la fecha de eliminación
             entity.DeletedAt = DateTime.UtcNow;
-            _context.Entry(entity).State = EntityState.Modified;
-            return await _context.SaveChangesAsync();
+
+            try
+            {
+                _context.Entry(entity).State = EntityState.Modified;
+                return await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException("Ocurrió un error al intentar eliminar la entidad.", ex);
+            }
         }
+
     }
 }

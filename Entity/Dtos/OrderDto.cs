@@ -5,8 +5,8 @@
     /// </summary>
     public class OrderDto : BaseDto
     {
-        public int CustomerID { get; set; }
-        public int EmployeeID { get; set; }
+        public int CustomerId { get; set; }
+        public int EmployeeId { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime RequiredDate { get; set; }
         public DateTime? ShippedDate { get; set; }
@@ -16,7 +16,7 @@
         public string ShipAddress { get; set; } = string.Empty;
         public string ShipCity { get; set; } = string.Empty;
         public string? ShipRegion { get; set; }
-        public string ShipPostalCode { get; set; } = string.Empty;
+        public int ShipPostalCode { get; set; } = 0;
         public string ShipCountry { get; set; } = string.Empty;
     }
 }

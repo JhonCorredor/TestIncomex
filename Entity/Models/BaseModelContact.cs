@@ -1,10 +1,10 @@
 ﻿namespace Entity.Models
 {
     /// <summary>
-    /// Clase base abstracta para los modelos de entidades que tienen información de contacto.
+    /// Clase base para los modelos de entidades que tienen información de contacto.
     /// Define las propiedades comunes que serán heredadas por entidades como Proveedor y Cliente.
     /// </summary>
-    public abstract class BaseModelContact : BaseModel
+    public class BaseModelContact : BaseModel
     {
         /// <summary>
         /// Nombre de la compañía.

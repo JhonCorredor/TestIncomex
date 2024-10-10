@@ -22,11 +22,6 @@
         public T Data { get; set; }
 
         /// <summary>
-        /// Información adicional, comúnmente usada para proporcionar datos de paginación.
-        /// </summary>
-        public MetaDataDto Meta { get; set; }
-
-        /// <summary>
         /// Constructor vacío que permite establecer valores por defecto.
         /// </summary>
         public ApiResponse() { }
@@ -34,13 +29,12 @@
         /// <summary>
         /// Constructor que inicializa una respuesta con datos seleccionados.
         /// </summary>
-        /// <param name="data">Lista de objetos `DataSelectDto` a devolver.</param>
-        public ApiResponse(IEnumerable<DataSelectDto> data)
+        /// <param name="data">Lista de objetos `BaseDto` a devolver.</param>
+        public ApiResponse(IEnumerable<BaseDto> data)
         {
             Status = true;
             Message = "Ok";
             Data = default;
-            Meta = null;
         }
 
         /// <summary>
@@ -50,12 +44,11 @@
         /// <param name="status">Estado de la respuesta, `true` para éxito, `false` para error.</param>
         /// <param name="message">Mensaje explicativo sobre la respuesta.</param>
         /// <param name="meta">Información adicional (como paginación).</param>
-        public ApiResponse(T data, bool status, string message, MetaDataDto meta)
+        public ApiResponse(T data, bool status, string message)
         {
             Data = data;
             Status = status;
             Message = message;
-            Meta = meta;
         }
     }
 }

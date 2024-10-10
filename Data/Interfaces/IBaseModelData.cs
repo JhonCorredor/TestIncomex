@@ -6,26 +6,18 @@ namespace Data.Interfaces
 {
     public interface IBaseModelData<T, D> where T : BaseModel where D : BaseDto
     {
-  
-        /// <summary>
-        /// Obtiene una lista de DTOs según los filtros especificados.
-        /// </summary>
-        /// <param name="filters">Filtros aplicables para la consulta, incluidos los parámetros de paginación, ordenación, y otros filtros dinámicos.</param>
-        /// <returns>Una lista de DTOs que cumplen con los filtros especificados.</returns>
-        Task<IEnumerable<D>> GetDataTable(QueryFilterDto filters);
-
         /// <summary>
         /// Obtiene una lista de todos los DTOs correspondientes a las entidades almacenadas.
         /// </summary>
         /// <returns>Una lista de todos los DTOs de las entidades.</returns>
-        Task<IEnumerable<D>> GetAllSelect();
+        Task<IEnumerable<D>> GetAll(PaginationDto pagination);
 
         /// <summary>
         /// Obtiene una entidad específica por su identificador único.
         /// </summary>
         /// <param name="id">Identificador único de la entidad a obtener.</param>
         /// <returns>La entidad correspondiente al identificador proporcionado.</returns>
-        Task<T> GetById(int id);
+        Task<D> GetById(int id);
 
         /// <summary>
         /// Guarda una nueva entidad en la base de datos.

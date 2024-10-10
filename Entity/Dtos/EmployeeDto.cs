@@ -1,4 +1,6 @@
-﻿namespace Entity.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entity.Dtos
 {
     /// <summary>
     /// DTO para la entidad Employee.
@@ -18,7 +20,7 @@
         public string Country { get; set; } = string.Empty;
         public string HomePhone { get; set; } = string.Empty;
         public string? Extension { get; set; }
-        public byte[]? Photo { get; set; }
+        public string? Photo { get; set; }
         public string? Notes { get; set; }
         public int? ReportsTo { get; set; }
     }

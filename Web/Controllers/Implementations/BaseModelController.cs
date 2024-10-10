@@ -2,6 +2,7 @@
 using Entity.Dtos;
 using Entity.Dtos.General;
 using Entity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers.Implementations
@@ -22,26 +23,26 @@ namespace Web.Controllers.Implementations
         /// Obtiene una lista de todos los registros disponibles en forma de DTOs.
         /// </summary>
         /// <returns>Una lista de DTOs que representan todos los registros almacenados.</returns>
-        [HttpGet("select")]
-        public override async Task<ActionResult<IEnumerable<D>>> GetAllSelect()
+        [HttpGet()]
+        public override async Task<ActionResult<IEnumerable<D>>> GetAll([FromQuery] PaginationDto pagination)
         {
             try
             {
-                var data = await _business.GetAllSelect();
+                var data = await _business.GetAll(pagination);
 
                 if (data == null)
                 {
-                    var responseNull = new ApiResponse<IEnumerable<D>>(null, false, "Registro no encontrado", null);
+                    var responseNull = new ApiResponse<IEnumerable<D>>(null!, false, "Registro no encontrado");
                     return NotFound(responseNull);
                 }
 
-                var response = new ApiResponse<IEnumerable<D>>(data, true, "Ok", null);
+                var response = new ApiResponse<IEnumerable<D>>(data, true, "Ok");
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
+                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
@@ -60,40 +61,17 @@ namespace Web.Controllers.Implementations
 
                 if (data == null)
                 {
-                    var responseNull = new ApiResponse<D>(null, false, "Registro no encontrado", null);
+                    var responseNull = new ApiResponse<D>(null!, false, "Registro no encontrado");
                     return NotFound(responseNull);
                 }
 
-                var response = new ApiResponse<D>(data, true, "Ok", null);
+                var response = new ApiResponse<D>(data, true, "Ok");
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-
-        /// <summary>
-        /// Obtiene una lista de registros aplicando filtros específicos, como paginación y ordenación.
-        /// </summary>
-        /// <param name="filters">Los filtros a aplicar a la consulta.</param>
-        /// <returns>Una lista de DTOs que cumplen con los filtros especificados.</returns>
-        [HttpGet("datatable")]
-        public override async Task<ActionResult<IEnumerable<D>>> GetDataTable([FromQuery] QueryFilterDto filters)
-        {
-            try
-            {
-                IEnumerable<D> lstDto = await _business.GetDataTable(filters);
-
-                var response = new ApiResponse<IEnumerable<D>>(lstDto, true, "Ok", null);
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
+                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
@@ -109,13 +87,13 @@ namespace Web.Controllers.Implementations
             try
             {
                 D dtoSaved = await _business.Save(dto);
-                var response = new ApiResponse<D>(dtoSaved, true, "Registro almacenado exitosamente", null);
+                var response = new ApiResponse<D>(dtoSaved, true, "Registro almacenado exitosamente");
 
                 return new CreatedAtRouteResult(new { id = dtoSaved.Id }, response);
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
+                var response = new ApiResponse<IEnumerable<D>>(null!, false, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
@@ -132,13 +110,13 @@ namespace Web.Controllers.Implementations
             {
                 await _business.Update(dto);
 
-                var response = new ApiResponse<D>(null, true, "Registro actualizado exitosamente", null);
+                var response = new ApiResponse<D>(null!, true, "Registro actualizado exitosamente");
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
+                var response = new ApiResponse<IEnumerable<D>>(null!, false, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
@@ -156,15 +134,15 @@ namespace Web.Controllers.Implementations
                 int registrosAfectados = await _business.Delete(id);
                 if (registrosAfectados == 0)
                 {
-                    var errorResponse = new ApiResponse<IEnumerable<D>>(null, false, "Registro no eliminado!", null);
+                    var errorResponse = new ApiResponse<IEnumerable<D>>(null, false, "Registro no eliminado!");
                     return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 }
-                var successResponse = new ApiResponse<D>(null, true, "Registro eliminado exitosamente", null);
+                var successResponse = new ApiResponse<D>(null!, true, "Registro eliminado exitosamente");
                 return Ok(successResponse);
             }
             catch (Exception ex)
             {
-                var errorResponse = new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null);
+                var errorResponse = new ApiResponse<IEnumerable<D>>(null!, false, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
         }
